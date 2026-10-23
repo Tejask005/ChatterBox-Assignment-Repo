@@ -4,11 +4,11 @@ import java.util.Scanner;
 
 public class View {
 
-    private Controller controller;
+    public Controller controller;
     private Scanner scanner;
 
     public View() {
-        controller = new Controller();
+        controller = new Controller("messages.txt");
         scanner = new Scanner(System.in);
     }
 
@@ -117,14 +117,17 @@ public class View {
     public void displayDeleteMessage() {
         System.out.println();
         System.out.println("Delete message");
-        System.out.println(controller.getCurrentUserMessages());
+        String[] messages = controller.getCurrentUserMessages().split("\n");
+        for (int i = 0; i < messages.length; i++) {
+            System.out.println(i + ": " + messages[i]);
+        }
         System.out.print("Enter the id of the message to delete: ");
         int id = readInt();
 
         if (id == -1) {
             System.out.println("That is not a valid id.");
         } else {
-            controller.deleteMessage(id);
+            controller.deleteMessage(String.valueOf(id), controller.currentUser);
             System.out.println("Done. If the id was one of your messages it has been deleted.");
         }
     }
@@ -142,6 +145,7 @@ public class View {
             controller.postMessage(msg);
             System.out.println("Message posted!");
         }
+        
     }
 
     // Prints the user's own messages
