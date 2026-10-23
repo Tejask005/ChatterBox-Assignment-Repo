@@ -16,6 +16,16 @@ public class UserList {
 	public boolean userExists(User user) {
 		return users.contains(user);
 	}
+	
+	public String getPasswordByUsername(String username) {
+		for (User user: users) {
+			RegisteredUser regUser = (RegisteredUser) user;
+			if (regUser.getUsername().equals(username))
+				return regUser.getPassword();
+		}
+		//if user does not exist in user list
+		return null;
+	}
 
 	/*
 	public static void main(String[] args) {
