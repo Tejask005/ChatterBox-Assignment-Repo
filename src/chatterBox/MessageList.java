@@ -17,14 +17,17 @@ public class MessageList {
 		this.nextId = 1;
 	}
 	
+	public ArrayList<Message> getAllMessages() {
+		return messages;
+	}
 	
 	public void loadFromFile() {
 		try (Scanner input = new Scanner(new File("messages.csv")) ){
 			while (input.hasNextLine()) {
-				String line = scanner.nextLine();
+				String line = input.nextLine();
 				System.out.println(line);
 			}
-		} catch (FileNotFoundExcepction e) {
+		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 		
@@ -45,16 +48,17 @@ public class MessageList {
 		messages.add(message);
 		nextId++;
 	}
-	public void removeMessage(int id) {
+	public boolean removeMessage(int id, RegisteredUser user) {
 		for (int i = 0; i < messages.size(); i++) {
-			if (messages.get(i).getId() == id) {
+			if (messages.get(i).getId() == id && messages.get(i).getUser().equals(user)) {
 				messages.remove(i);
-				return;
+				return true;
 			}
 		}
+		return false;
 	}
 	
-	public ArrayList<Message> getMessagesFromUser(User user) {
+	public ArrayList<Message> getMessagesFromUser(RegisteredUser user) {
 		ArrayList<Message> userMessages = new ArrayList<>(); 
 		
 		for(Message message : messages) {

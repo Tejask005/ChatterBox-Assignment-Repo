@@ -23,19 +23,24 @@ public class View {
                 // Log in
                 boolean loggedIn = view.displayLogIn();
                 if (loggedIn) {
-                    int option = view.displayRegisteredInterface();
-                    if (option == 1) {
-                        view.displayPostMessage();
-                    } else if (option == 2) {
-                        view.displayDeleteMessage();
-                    } else if (option == 3) {
-                        view.displayUserMessages();
-                    } else if (option == 4) {
-                        view.displayAllMessages();
-                    } else if (option == 5) {
-                        System.out.println("Logged out.");
-                    } else {
-                        System.out.println("Invalid choice, try again.");
+                    boolean inmenu = true;
+                    while (inmenu) {
+                        int option = view.displayRegisteredInterface();
+                        if (option == 1) {
+                            view.displayPostMessage();
+                        } else if (option == 2) {
+                            view.displayDeleteMessage();
+                        } else if (option == 3) {
+                            view.displayUserMessages();
+                        } else if (option == 4) {
+                            view.displayAllMessages();
+                        } else if (option == 5) {
+                            view.controller.logOut();
+                            System.out.println("Logged out.");
+                            inmenu = false;
+                        } else {
+                            System.out.println("Invalid choice, try again.");
+                        }
                     }
                 }
             } else if (choice == 2) {
@@ -117,18 +122,16 @@ public class View {
     public void displayDeleteMessage() {
         System.out.println();
         System.out.println("Delete message");
-        String[] messages = controller.getCurrentUserMessages().split("\n");
-        for (int i = 0; i < messages.length; i++) {
-            System.out.println(i + ": " + messages[i]);
-        }
+        System.out.println(controller.getCurrentUserMessages());
         System.out.print("Enter the id of the message to delete: ");
         int id = readInt();
 
         if (id == -1) {
             System.out.println("That is not a valid id.");
+        } else if (controller.deleteMessage(id)) {
+            System.out.println("Message deleted.");
         } else {
-            controller.deleteMessage(String.valueOf(id), controller.currentUser);
-            System.out.println("Done. If the id was one of your messages it has been deleted.");
+            System.out.println("Failed to delete message.");
         }
     }
 

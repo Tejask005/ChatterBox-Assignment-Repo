@@ -27,7 +27,7 @@ public class Message {
 	
 	@Override
 	public String toString() {
-		 return user.getUsername() + id + ":\n" + text;
+		 return "ID: " + id + ", User: " + user.getUsername() + ", Message: " + text;
 	}
 
 }

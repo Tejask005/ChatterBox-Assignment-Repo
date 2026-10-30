@@ -5,12 +5,12 @@ import java.util.*;
 
 public class Controller {
 
-    private List<String> messageList;
+    private MessageList messagesList;
     private UserList userList;
     public User currentUser;
 
     public Controller(String messageFilePath) {
-        messageList = new ArrayList<>();
+        messagesList = new MessageList();
         userList = new UserList();
         currentUser = new GuestUser();
     }
@@ -24,24 +24,32 @@ public class Controller {
             return false;
         } 
     }
-    public void deleteMessage(String message){
-        if (currentUser instanceof RegisteredUser){
-            messageList.remove(message);
-        } else {
-            System.out.println("Only registered users can delete messages.");
-        }
-        
+
+    public void logOut(){
+        currentUser = new GuestUser();
     }
-    public void postMessage(String message){
+
+    // delete a message by its ID
+    public boolean deleteMessage(int messageId) {
+        if (currentUser instanceof RegisteredUser) {
+            return messagesList.removeMessage(messageId, (RegisteredUser) currentUser);
+        } else {
+            System.out.println("Only users can delete messages.");
+            return false;
+        }
+    }
+
+
+    public void postMessage(String text){
         if (currentUser instanceof RegisteredUser){
-            messageList.add(message);
+            messagesList.addMessage(text, (RegisteredUser) currentUser);
         } else {
             System.out.println("Only registered users can post messages.");
         }
     }
     public String getAllMessages(){
         StringBuilder allMessages = new StringBuilder();
-        for (String message : messageList){
+        for (Message message : messagesList.getAllMessages()){
             allMessages.append(message).append("\n");
         }
         return allMessages.toString();
@@ -49,20 +57,13 @@ public class Controller {
     public String getCurrentUserMessages(){
         if (currentUser instanceof RegisteredUser){
             StringBuilder userMessages = new StringBuilder();
-            for (String message : messageList){
+            for (Message message : messagesList.getMessagesFromUser((RegisteredUser) currentUser)){
                 userMessages.append(message).append("\n");
             }
             return userMessages.toString();
         } else {
             return "Only registered users can view their messages.";
         }
-    }
-    public void deleteMessage(String message, User currentUser){
-        if (currentUser instanceof RegisteredUser){
-            messageList.remove(message);
-        } else {
-            System.out.println("Only registered users can delete messages.");
-        }    
     }
     
 }
