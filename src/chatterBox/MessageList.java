@@ -1,9 +1,11 @@
 package chatterBox;
 
 import java.io.*;
-import java.util.ArrayList; 
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.Scanner;
-
 
 public class MessageList {
 	//attributes
@@ -21,33 +23,39 @@ public class MessageList {
 		return messages;
 	}
 	
-	public void loadFromFile() {
-		try (Scanner input = new Scanner(new File("messages.csv")) ){
+	public void loadFromFile() throws Exception {
+		try (Scanner input = new Scanner(new File("messages.csv"))){
+			ArrayList<Message> newMessages = new ArrayList<>();
 			while (input.hasNextLine()) {
 				String line = input.nextLine();
-				System.out.println(line);
+				String[] data = line.split("\t");
+				Message message = new Message(
+						Integer.parseInt(data[0].trim()),
+						new RegisteredUser(data[1].trim(), new UserList().getPasswordByUsername(data[1].trim())),
+						data[2].trim(),
+						new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH).parse(data[3].trim())
+						);
+				newMessages.add(message);
 			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			messages = newMessages;
+			nextId = messages.get(messages.size() - 1).getId() + 1;
 		}
-		
 	}
 	
-	public void saveToFile() {
-		try (PrintWriter writer = new PrintWriter(new FileWriter("messages.csv"))){
+	public void saveToFile() throws Exception {
+		try (PrintWriter writer = new PrintWriter(new FileWriter("messages.csv"))) {
 			for(Message message : messages) {
-				writer.println(message.getId() + "," + message.getUser().getUsername() + "," + message.getText());
+				writer.println(message.getId() + "\t" + message.getUser().getUsername() + "\t" + message.getText() + "\t" + message.getDate().toString());
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 	}
 	
 	public void addMessage(String msg, RegisteredUser user) {
-		Message message = new Message(nextId, user, msg); 
+		Message message = new Message(nextId, user, msg, new Date());
 		messages.add(message);
 		nextId++;
 	}
+	
 	public boolean removeMessage(int id, RegisteredUser user) {
 		for (int i = 0; i < messages.size(); i++) {
 			if (messages.get(i).getId() == id && messages.get(i).getUser().equals(user)) {
@@ -59,14 +67,13 @@ public class MessageList {
 	}
 	
 	public ArrayList<Message> getMessagesFromUser(RegisteredUser user) {
-		ArrayList<Message> userMessages = new ArrayList<>(); 
-		
+		ArrayList<Message> userMessages = new ArrayList<>();
 		for(Message message : messages) {
 			if (message.getUser().equals(user)) {
 				userMessages.add(message);
 			}
 		}
 		return userMessages;
-		
 	}
+	
 }

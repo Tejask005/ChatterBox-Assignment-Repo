@@ -26,17 +26,5 @@ public class UserList {
 		//if user does not exist in user list
 		return null;
 	}
-
-	/*
-	public static void main(String[] args) {
-		UserList userList = new UserList();
-		System.out.println(new GuestUser().equals(new GuestUser()));
-		System.out.println(new GuestUser().equals(new RegisteredUser("user1", "123")));
-		System.out.println(new RegisteredUser("user1", "123").equals(new RegisteredUser("user2", "456")));
-		System.out.println(new RegisteredUser("user1", "123").equals(new RegisteredUser("user1", "123")));
-		System.out.println(userList.userExists(new RegisteredUser("user1", "123")));
-		System.out.println(userList.userExists(new RegisteredUser("hello", "world")));
-	}
-	*/
 	
 }

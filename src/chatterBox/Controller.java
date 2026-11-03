@@ -1,28 +1,29 @@
 package chatterBox;
 
-import java.util.*;
-
-
 public class Controller {
 
     private MessageList messagesList;
     private UserList userList;
-    public User currentUser;
+    private User currentUser;
 
-    public Controller(String messageFilePath) {
+    public Controller() {
         messagesList = new MessageList();
         userList = new UserList();
         currentUser = new GuestUser();
     }
+    
+    public void loadMessages() throws Exception {
+    	messagesList.loadFromFile();
+    }
 
     public boolean logIn(String username, String password){
-        RegisteredUser user = new RegisteredUser(username, password);
+        RegisteredUser user = new RegisteredUser(username.trim(), password.trim());
         if (userList.userExists(user)) {
             currentUser = user;
             return true;
         } else {
             return false;
-        } 
+        }
     }
 
     public void logOut(){
@@ -30,23 +31,23 @@ public class Controller {
     }
 
     // delete a message by its ID
-    public boolean deleteMessage(int messageId) {
+    public boolean deleteMessage(int messageId) throws Exception {
         if (currentUser instanceof RegisteredUser) {
-            return messagesList.removeMessage(messageId, (RegisteredUser) currentUser);
-        } else {
-            System.out.println("Only users can delete messages.");
-            return false;
+        	boolean success = messagesList.removeMessage(messageId, (RegisteredUser) currentUser);
+        	if (success)
+        		messagesList.saveToFile();
+        	return success;
         }
+        return false;
     }
 
-
-    public void postMessage(String text){
+    public void postMessage(String text) throws Exception {
         if (currentUser instanceof RegisteredUser){
             messagesList.addMessage(text, (RegisteredUser) currentUser);
-        } else {
-            System.out.println("Only registered users can post messages.");
+            messagesList.saveToFile();
         }
     }
+    
     public String getAllMessages(){
         StringBuilder allMessages = new StringBuilder();
         for (Message message : messagesList.getAllMessages()){
@@ -54,6 +55,7 @@ public class Controller {
         }
         return allMessages.toString();
     }
+    
     public String getCurrentUserMessages(){
         if (currentUser instanceof RegisteredUser){
             StringBuilder userMessages = new StringBuilder();

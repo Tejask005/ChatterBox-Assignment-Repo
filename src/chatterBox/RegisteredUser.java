@@ -25,7 +25,7 @@ public class RegisteredUser extends User {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (!(obj instanceof RegisteredUser))

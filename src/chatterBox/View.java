@@ -4,16 +4,23 @@ import java.util.Scanner;
 
 public class View {
 
-    public Controller controller;
+    private Controller controller;
     private Scanner scanner;
 
     public View() {
-        controller = new Controller("messages.txt");
+        controller = new Controller();
         scanner = new Scanner(System.in);
     }
 
     public static void main(String[] args) {
         View view = new View();
+        try {
+        	view.controller.loadMessages();
+        }
+        catch (Exception e) {
+        	System.out.println("Failed to load messages.");
+        	System.out.println(e.getMessage());
+        }
         boolean running = true;
 
         while (running) {
@@ -128,10 +135,17 @@ public class View {
 
         if (id == -1) {
             System.out.println("That is not a valid id.");
-        } else if (controller.deleteMessage(id)) {
-            System.out.println("Message deleted.");
         } else {
-            System.out.println("Failed to delete message.");
+        	try {
+        		boolean success = controller.deleteMessage(id);
+        		if (success)
+        			System.out.println("Message deleted. Your changes have been saved.");
+        		else
+        			System.out.println("You are not allowed to delete this message.");
+        	}
+        	catch (Exception e) {
+        		System.out.println("Message deleted. Failed to save changes.");
+        	}
         }
     }
 
@@ -145,10 +159,14 @@ public class View {
         if (msg.trim().isEmpty()) {
             System.out.println("You can't post an empty message.");
         } else {
-            controller.postMessage(msg);
-            System.out.println("Message posted!");
+        	try {
+        		controller.postMessage(msg);
+            	System.out.println("Message posted!");
+        	}
+        	catch (Exception e) {
+        		System.out.println("Failed to upload message.");
+        	}
         }
-        
     }
 
     // Prints the user's own messages
@@ -175,6 +193,5 @@ public class View {
         }
         return -1;
     }
+    
 }
-
-

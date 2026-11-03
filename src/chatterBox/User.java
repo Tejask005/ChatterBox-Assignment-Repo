@@ -6,5 +6,5 @@ public abstract class User {
 	public boolean equals(Object obj) {
 		return obj instanceof User;
 	}
-
+	
 }
